@@ -39,8 +39,8 @@ aws ssm start-session --target <SSM-Instance-ID> \
 
 成功すると以下のような表示が出ます
 ```
-Starting session with SessionId: user-0123456789abcdef0
-Port 5433 opened for sessionId user-0123456789abcdef0.
+Starting session with SessionId: user-xxx
+Port 5433 opened for sessionId user-xxx
 Waiting for connections...
 ```
 
