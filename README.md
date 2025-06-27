@@ -1,14 +1,54 @@
-# Welcome to your CDK TypeScript project
+# Aurora PostgreSQL with SSM Access
+Aurora PostgreSQLをプライベートサブネットに配置し、SSM Session Manager経由でローカルからデータベースにアクセスできる環境を構築します。NAT Gatewayは使用せず、VPCエンドポイントを使用しています。
 
-This is a blank project for CDK development with TypeScript.
+## 前提条件
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+- AWS CLIが設定済みであること
+- AWS CDKがインストール済みであること
+- Session Manager Pluginがインストール済みであること
+- 必要なAWS権限が設定されていること
 
-## Useful commands
+## 手順
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+### デプロイ実行
+```
+cdk deploy
+```
+
+### デプロイ後の出力値確認
+```
+SimpleRdsSsmStack.SSMInstanceId
+SimpleRdsSsmStack.AuroraClusterEndpoint
+```
+
+### ローカルからSSM経由でアクセス
+
+#### データベース認証情報の取得
+認証情報の取得
+```
+aws secretsmanager get-secret-value --secret-id aurora-postgresql-credentials
+```
+
+#### SSMポートフォワーディングの開始
+出力値から取得したコマンドを実行
+```
+aws ssm start-session --target <SSM-Instance-ID> \
+  --document-name AWS-StartPortForwardingSessionToRemoteHost \
+  --parameters '{"host":["<Aurora-Endpoint>"],"portNumber":["5432"],"localPortNumber":["5433"]}'
+```
+
+成功すると以下のような表示が出ます
+```
+Starting session with SessionId: user-0123456789abcdef0
+Port 5433 opened for sessionId user-0123456789abcdef0.
+Waiting for connections...
+```
+
+#### データベースクライアントでの接続
+```
+Host: localhost
+Port: 5433
+Database: 上記で取得したDB名
+Username: postgres
+Password: 上記で取得したパスワード
+```
