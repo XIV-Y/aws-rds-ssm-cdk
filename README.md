@@ -1,5 +1,7 @@
 # Aurora PostgreSQL with SSM Access
-Aurora PostgreSQLをプライベートサブネットに配置し、SSM Session Manager経由でローカルからデータベースにアクセスできる環境を構築します。NAT Gatewayは使用せず、VPCエンドポイントを使用しています。
+Aurora PostgreSQLをプライベートサブネットに配置し、SSM Session Manager経由でローカルからデータベースにアクセスできる環境を構築します。プライベートサブネットの通信にはVPCエンドポイントを使用しています。
+
+![名称未設定ファイル drawio (3)](https://github.com/user-attachments/assets/b9b65c4d-30b6-4c33-8a41-fe80a3925e75)
 
 ## 前提条件
 
